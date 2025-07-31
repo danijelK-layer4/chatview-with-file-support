@@ -36,6 +36,7 @@ class ChatBubble {
     this.senderNameTextStyle,
     this.receiptsWidgetConfig,
     this.onMessageRead,
+    this.isGroup,
   });
 
   /// Used for giving color of chat bubble.
@@ -66,4 +67,6 @@ class ChatBubble {
   /// Callback when a message has been displayed for the first
   /// time only
   final ValueSetter<Message>? onMessageRead;
+
+  final bool? isGroup;
 }

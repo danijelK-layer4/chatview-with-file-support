@@ -254,16 +254,19 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         if ((chatController?.otherUsers.isNotEmpty ?? false) &&
             !isMessageBySender &&
             (featureActiveConfig?.enableOtherUserName ?? true))
-          Padding(
-            padding: chatListConfig
-                    .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Text(
-              messagedUser?.name ?? '',
-              style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig
-                  ?.senderNameTextStyle,
+          if (chatListConfig
+                  .chatBubbleConfig?.inComingChatBubbleConfig?.isGroup ??
+              false)
+            Padding(
+              padding: chatListConfig
+                      .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text(
+                messagedUser?.name ?? '',
+                style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig
+                    ?.senderNameTextStyle,
+              ),
             ),
-          ),
         if (replyMessage.isNotEmpty)
           chatListConfig.repliedMessageConfig?.repliedMessageWidgetBuilder !=
                   null
