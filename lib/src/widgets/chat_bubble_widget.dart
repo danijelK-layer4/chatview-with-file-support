@@ -260,7 +260,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             Padding(
               padding: chatListConfig
                       .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               child: Text(
                 messagedUser?.name ?? '',
                 style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig

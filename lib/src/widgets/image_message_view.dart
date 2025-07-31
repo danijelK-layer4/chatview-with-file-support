@@ -97,7 +97,7 @@ class ImageMessageView extends StatelessWidget {
                         bottom: message.reaction.reactions.isNotEmpty ? 15 : 0,
                       ),
                   height: imageMessageConfig?.height ?? 200,
-                  width: imageMessageConfig?.width ?? 150,
+                  width: imageMessageConfig?.width ?? 160,
                   child: ClipRRect(
                     borderRadius: imageMessageConfig?.borderRadius ??
                         BorderRadius.circular(14),
@@ -144,8 +144,8 @@ class ImageMessageView extends StatelessWidget {
               ),
           ],
         ),
-        if (!isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
-          iconButton,
+        // if (!isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
+        //   iconButton,
       ],
     );
   }
