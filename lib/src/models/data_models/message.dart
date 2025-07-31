@@ -33,6 +33,7 @@ class Message {
     required this.message,
     required this.createdAt,
     required this.sentBy,
+    this.fileName,
     this.id = '',
     this.replyMessage = const ReplyMessage(),
     this.messageType = MessageType.text,
@@ -93,6 +94,8 @@ class Message {
   /// or an audio file path.
   final String message;
 
+  final String? fileName;
+
   /// The date and time when the message was created.
   final DateTime createdAt;
 
@@ -144,6 +147,7 @@ class Message {
       'sentBy': sentBy,
       'status': _status.value.name,
       'message_type': messageType.name,
+      'fileName': fileName,
     };
 
     if (includeNullValues) {
@@ -181,6 +185,7 @@ class Message {
     DateTime? updateAt,
     Map<String, String>? update,
     bool forceNullValue = false,
+    String? fileName,
   }) {
     return Message(
       id: id ?? this.id,
@@ -196,6 +201,7 @@ class Message {
       updateAt: forceNullValue ? updateAt : updateAt ?? this.updateAt,
       update: forceNullValue ? update : update ?? this.update,
       status: status ?? this.status,
+      fileName: fileName ?? this.fileName,
     );
   }
 
