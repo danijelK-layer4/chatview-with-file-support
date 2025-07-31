@@ -27,7 +27,6 @@ import 'package:flutter/material.dart';
 
 import '../controller/chat_controller.dart';
 import '../extensions/extensions.dart';
-import '../models/config_models/send_message_configuration.dart';
 import '../models/models.dart';
 import 'chat_groupedlist_widget.dart';
 import 'reply_popup_widget.dart';

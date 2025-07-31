@@ -17,7 +17,6 @@ class FileMessageView extends StatelessWidget {
   final Message message;
   final bool isMessageBySender;
 
-  // Function to check if a string is a valid HTTP/HTTPS URL
   bool _isWebUrl(String urlString) {
     try {
       final uri = Uri.parse(urlString);
@@ -28,61 +27,47 @@ class FileMessageView extends StatelessWidget {
   }
 
   void _onFileTap(BuildContext context, String pathOrUrl) async {
-    print('--- File Tap Debug Start ---');
-    print('1. Input path/URL: $pathOrUrl');
-
     if (kIsWeb) {
-      // On web, always try to open as a URL
       try {
         final uri = Uri.parse(pathOrUrl);
         if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.platformDefault);
-          print('Opened URL on Web: $pathOrUrl');
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Opened web link: ${uri.host}')),
           );
         } else {
-          print('Could not launch URL on Web: $pathOrUrl');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Could not open web link.')),
           );
         }
       } catch (e) {
-        print('Error parsing or launching URL on Web: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid URL or error opening: $pathOrUrl')),
         );
       }
-      print('--- File Tap Debug End (Web) ---');
-      return; // Exit as web handling is done
+      return;
     }
 
-    // For non-web platforms (mobile, desktop)
     if (_isWebUrl(pathOrUrl)) {
-      print('2. Detected as Web URL. Attempting to open with url_launcher.');
       try {
         final uri = Uri.parse(pathOrUrl);
         if (await canLaunchUrl(uri)) {
-          await launchUrl(uri,
-              mode: LaunchMode.externalApplication); // Open in external browser
-          print('Opened web URL: $pathOrUrl');
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Opened web link: ${uri.host}')),
           );
         } else {
-          print('Could not launch web URL: $pathOrUrl');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Could not open web link: $pathOrUrl')),
           );
         }
       } catch (e) {
-        print('Error parsing or launching URL: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid URL or error opening: $pathOrUrl')),
         );
       }
     } else {
-      // Assume it's a local file path
       String actualFilePath;
       if (pathOrUrl.startsWith('file:///')) {
         actualFilePath =
@@ -90,27 +75,19 @@ class FileMessageView extends StatelessWidget {
       } else {
         actualFilePath = Uri.decodeComponent(pathOrUrl);
       }
-      print(
-          '2. Detected as Local File Path: $actualFilePath. Attempting to open with OpenFilex.');
 
       final File file = File(actualFilePath);
 
       if (await file.exists()) {
-        print('3. Local file exists at path: $actualFilePath');
         try {
           final OpenResult result = await OpenFilex.open(actualFilePath);
-          print('4. OpenFilex result type: ${result.type}');
-          print('5. OpenFilex result message: ${result.message}');
 
           if (result.type == ResultType.done) {
-            print('File opened successfully!');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   content: Text('Opened file: ${file.path.split('/').last}')),
             );
           } else {
-            print(
-                'Failed to open local file with OpenFilex. Error: ${result.message}');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   content: Text(
@@ -118,15 +95,12 @@ class FileMessageView extends StatelessWidget {
             );
           }
         } catch (e) {
-          print(
-              '6. Exception caught when trying to open local file with OpenFilex: $e');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text('An unexpected error occurred: ${e.toString()}')),
           );
         }
       } else {
-        print('3. Local file DOES NOT exist at path: $actualFilePath');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
@@ -134,7 +108,6 @@ class FileMessageView extends StatelessWidget {
         );
       }
     }
-    print('--- File Tap Debug End ---');
   }
 
   @override
@@ -148,10 +121,9 @@ class FileMessageView extends StatelessWidget {
     Color textColor = isMessageBySender ? Colors.blue[900]! : Colors.black87;
 
     if (_isWebUrl(pathOrUrl)) {
-      displayFileName = Uri.parse(pathOrUrl).host; // Show domain for URL
-      displayIcon = Icons.link; // Link icon for URLs
+      displayFileName = Uri.parse(pathOrUrl).host;
+      displayIcon = Icons.link;
     } else {
-      // Treat as a local file path
       String actualFilePath;
       if (pathOrUrl.startsWith('file:///')) {
         actualFilePath =
@@ -159,9 +131,8 @@ class FileMessageView extends StatelessWidget {
       } else {
         actualFilePath = Uri.decodeComponent(pathOrUrl);
       }
-      displayFileName =
-          actualFilePath.split('/').last; // Show file name for local files
-      displayIcon = Icons.insert_drive_file; // Generic file icon
+      displayFileName = actualFilePath.split('/').last;
+      displayIcon = Icons.insert_drive_file;
     }
 
     return GestureDetector(
