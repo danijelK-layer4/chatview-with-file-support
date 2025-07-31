@@ -121,7 +121,7 @@ class FileMessageView extends StatelessWidget {
     Color textColor = isMessageBySender ? Colors.blue[900]! : Colors.black87;
 
     if (_isWebUrl(pathOrUrl)) {
-      displayFileName = Uri.parse(pathOrUrl).host;
+      displayFileName = Uri.parse(pathOrUrl).pathSegments.last;
       displayIcon = Icons.link;
     } else {
       String actualFilePath;
