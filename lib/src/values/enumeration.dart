@@ -102,6 +102,7 @@ enum SuggestionItemsType {
 /// - [voice]: A voice message (Android & iOS only).
 /// - [custom]: A custom message type.
 /// - [file]: A general file message.
+/// - [loading]: A loading state for messages.
 /// {@endtemplate}
 enum MessageType {
   image,
@@ -110,7 +111,8 @@ enum MessageType {
   /// Only supported on android and ios
   voice,
   custom,
-  file;
+  file,
+  loading;
 
   bool get isImage => this == image;
 
@@ -121,6 +123,8 @@ enum MessageType {
   bool get isCustom => this == custom;
 
   bool get isFile => this == file;
+
+  bool get isLoading => this == loading;
 
   static MessageType? tryParse(String? value) {
     final type = value?.trim().toLowerCase();

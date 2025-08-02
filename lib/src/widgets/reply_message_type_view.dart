@@ -108,6 +108,14 @@ class ReplyMessageTypeView extends StatelessWidget {
             color: sendMessageConfig?.replyMessageColor ?? Colors.black,
           ),
         ),
+      MessageType.loading => SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: sendMessageConfig?.replyMessageColor ?? Colors.black,
+          ),
+        ),
     };
   }
 }

@@ -109,6 +109,12 @@ base class ChatController {
     messageStreamController.sink.add(initialMessageList);
   }
 
+  void removeMessage(String messageId) {
+    initialMessageList.removeWhere((m) => m.id == messageId);
+    if (messageStreamController.isClosed) return;
+    messageStreamController.sink.add(initialMessageList);
+  }
+
   /// Function for loading data while pagination.
   void loadMoreData(List<Message> messageList) {
     /// Here, we have passed 0 index as we need to add data before first data
