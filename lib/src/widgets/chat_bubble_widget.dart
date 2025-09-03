@@ -124,8 +124,12 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   Widget _chatBubbleWidget(ChatUser? messagedUser) {
     final chatBubbleConfig = chatListConfig.chatBubbleConfig;
     return Container(
-      padding: chatBubbleConfig?.padding ?? const EdgeInsets.only(left: 5.0),
-      margin: chatBubbleConfig?.margin ?? const EdgeInsets.only(bottom: 10),
+      padding: chatBubbleConfig?.padding ??
+          const EdgeInsets.only(
+            left: 1.0,
+            right: 5.0,
+          ),
+      margin: chatBubbleConfig?.margin ?? const EdgeInsets.only(bottom: 30),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment:
@@ -252,15 +256,14 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
           isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         if ((chatController?.otherUsers.isNotEmpty ?? false) &&
-            !isMessageBySender &&
-            (featureActiveConfig?.enableOtherUserName ?? true))
+            !isMessageBySender)
           if (chatListConfig
                   .chatBubbleConfig?.inComingChatBubbleConfig?.isGroup ??
               false)
             Padding(
               padding: chatListConfig
                       .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Text(
                 messagedUser?.name ?? '',
                 style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig

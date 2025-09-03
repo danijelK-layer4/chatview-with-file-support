@@ -218,6 +218,8 @@ class _MessageViewState extends State<MessageView>
                   return FileMessageView(
                     message: widget.message,
                     isMessageBySender: widget.isMessageBySender,
+                    inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
+                    outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,
                   );
                 } else if (widget.message.messageType.isText) {
                   return TextMessageView(
@@ -273,7 +275,7 @@ class _MessageViewState extends State<MessageView>
               }
               return const SizedBox();
             },
-          )
+          ),
         ],
       ),
     );

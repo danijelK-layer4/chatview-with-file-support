@@ -99,6 +99,10 @@ class _ChatListWidgetState extends State<ChatListWidget> {
       // When flag is on then it will include pagination logic to scroll
       // controller.
       scrollController.addListener(_pagination);
+    } else {
+      scrollController.addListener(() {
+        FocusScope.of(context).unfocus();
+      });
     }
   }
 
@@ -173,6 +177,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
   }
 
   void _pagination() {
+    FocusScope.of(context).unfocus();
     if (widget.loadMoreData == null || widget.isLastPage == true) return;
     if ((scrollController.position.pixels ==
             scrollController.position.maxScrollExtent) &&

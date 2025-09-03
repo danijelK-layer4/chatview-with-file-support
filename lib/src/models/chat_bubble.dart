@@ -34,6 +34,7 @@ class ChatBubble {
     this.margin,
     this.linkPreviewConfig,
     this.senderNameTextStyle,
+    this.timeTextStyle,
     this.receiptsWidgetConfig,
     this.onMessageRead,
     this.isGroup,
@@ -69,4 +70,6 @@ class ChatBubble {
   final ValueSetter<Message>? onMessageRead;
 
   final bool? isGroup;
+
+  final TextStyle? timeTextStyle;
 }

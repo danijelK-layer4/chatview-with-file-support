@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'dart:io'; // Needed for File class
 // import 'package:open_filex/open_filex.dart'; // Import open_filex
@@ -12,10 +13,14 @@ class FileMessageView extends StatelessWidget {
     Key? key,
     required this.message,
     required this.isMessageBySender,
+    required this.inComingChatBubbleConfig,
+    required this.outgoingChatBubbleConfig,
   }) : super(key: key);
 
   final Message message;
   final bool isMessageBySender;
+  final ChatBubble? inComingChatBubbleConfig;
+  final ChatBubble? outgoingChatBubbleConfig;
 
   bool _isWebUrl(String urlString) {
     try {
@@ -138,83 +143,108 @@ class FileMessageView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => _onFileTap(context, pathOrUrl),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: EdgeInsets.only(
-          top: 6,
-          right: isMessageBySender ? 6 : 0,
-          left: isMessageBySender ? 0 : 6,
-          bottom: message.reaction.reactions.isNotEmpty ? 15 : 0,
-        ),
-        decoration: BoxDecoration(
-          color: isMessageBySender ? Colors.blue[100] : Colors.grey[300],
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              displayIcon,
-              color: iconColor,
+      child: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            margin: EdgeInsets.only(
+              top: 6,
+              right: isMessageBySender ? 6 : 0,
+              left: isMessageBySender ? 0 : 5,
+              bottom: 20,
             ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    displayFileName,
-                    style: TextStyle(
-                      color: textColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // Conditional display for file size/status or URL status
-                  _isWebUrl(pathOrUrl)
-                      ? Text(
-                          'Web Link',
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.black54),
-                        )
-                      : FutureBuilder<bool>(
-                          future: File(pathOrUrl.startsWith('file:///')
-                                  ? Uri.decodeComponent(
-                                      pathOrUrl.substring('file:///'.length))
-                                  : Uri.decodeComponent(pathOrUrl))
-                              .exists(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasData && snapshot.data == true) {
-                                final file = File(pathOrUrl
-                                        .startsWith('file:///')
-                                    ? Uri.decodeComponent(
-                                        pathOrUrl.substring('file:///'.length))
-                                    : Uri.decodeComponent(pathOrUrl));
-                                return Text(
-                                  'File exists (${(file.lengthSync() / 1024).toStringAsFixed(2)} KB)',
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.black54),
-                                );
-                              } else {
-                                return Text(
-                                  'File not found',
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.red),
-                                );
-                              }
-                            }
-                            return const Text('Checking file...',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.black54));
-                          },
-                        ),
-                ],
+            decoration: BoxDecoration(
+              color: isMessageBySender ? Colors.blue[100] : Colors.grey[300],
+              borderRadius: BorderRadius.only(
+                bottomLeft:
+                    isMessageBySender ? const Radius.circular(12) : Radius.zero,
+                bottomRight:
+                    isMessageBySender ? Radius.zero : const Radius.circular(12),
+                topLeft: const Radius.circular(10),
+                topRight: const Radius.circular(10),
               ),
             ),
-          ],
-        ),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.75,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  displayIcon,
+                  color: iconColor,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayFileName,
+                        style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      // Conditional display for file size/status or URL status
+                      _isWebUrl(pathOrUrl)
+                          ? Text(
+                              'Web Link',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.black54),
+                            )
+                          : FutureBuilder<bool>(
+                              future: File(pathOrUrl.startsWith('file:///')
+                                      ? Uri.decodeComponent(pathOrUrl
+                                          .substring('file:///'.length))
+                                      : Uri.decodeComponent(pathOrUrl))
+                                  .exists(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data == true) {
+                                    final file = File(
+                                        pathOrUrl.startsWith('file:///')
+                                            ? Uri.decodeComponent(pathOrUrl
+                                                .substring('file:///'.length))
+                                            : Uri.decodeComponent(pathOrUrl));
+                                    return Text(
+                                      'File exists (${(file.lengthSync() / 1024).toStringAsFixed(2)} KB)',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    );
+                                  } else {
+                                    return Text(
+                                      'File not found',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.red),
+                                    );
+                                  }
+                                }
+                                return const Text('Checking file...',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black54));
+                              },
+                            ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            right: 6,
+            child: Text(
+              DateFormat('HH:mm').format(message.createdAt),
+              style: isMessageBySender
+                  ? inComingChatBubbleConfig?.timeTextStyle
+                  : outgoingChatBubbleConfig?.timeTextStyle,
+            ),
+          ),
+        ],
       ),
     );
   }

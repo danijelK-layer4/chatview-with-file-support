@@ -21,6 +21,7 @@
  */
 import 'package:chatview/src/models/data_models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../extensions/extensions.dart';
 import '../models/chat_bubble.dart';
@@ -103,6 +104,16 @@ class TextMessageView extends StatelessWidget {
                         fontSize: 16,
                       ),
                 ),
+        ),
+        Positioned(
+          bottom: -22,
+          right: 6,
+          child: Text(
+            DateFormat('HH:mm').format(message.createdAt),
+            style: isMessageBySender
+                ? inComingChatBubbleConfig?.timeTextStyle
+                : outgoingChatBubbleConfig?.timeTextStyle,
+          ),
         ),
         if (message.reaction.reactions.isNotEmpty)
           ReactionWidget(
