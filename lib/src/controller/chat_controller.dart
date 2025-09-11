@@ -177,9 +177,9 @@ base class ChatController {
       );
 
   /// Function for getting ChatUser object from user id
-  ChatUser getUserFromId(String userId) {
+  ChatUser? getUserFromId(String? userId) {
+    if (userId == null) return null;
     final user = userId == currentUser.id ? currentUser : _otherUsers[userId];
-    if (user == null) throw Exception('User with ID $userId not found!');
     return user;
   }
 

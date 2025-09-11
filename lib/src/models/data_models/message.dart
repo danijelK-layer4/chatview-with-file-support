@@ -32,7 +32,8 @@ class Message {
   Message({
     required this.message,
     required this.createdAt,
-    required this.sentBy,
+    this.sentBy,
+    this.sentByName,
     this.fileName,
     this.id = '',
     this.replyMessage = const ReplyMessage(),
@@ -100,7 +101,9 @@ class Message {
   final DateTime createdAt;
 
   /// The sender's unique identifier (ID).
-  final String sentBy;
+  final String? sentBy;
+
+  final String? sentByName;
 
   /// The replied message, if the user has replied to any message.
   final ReplyMessage replyMessage;

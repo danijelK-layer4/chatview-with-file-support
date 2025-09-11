@@ -51,7 +51,7 @@ typedef ReactionCallback = void Function(
   String emoji,
 );
 typedef ReactedUserCallback = void Function(
-  ChatUser reactedUser,
+  ChatUser? reactedUser,
   String reaction,
 );
 
@@ -90,7 +90,7 @@ typedef ReplyPopupBuilder = Widget Function(
 typedef ImagePickedCallback = Future<String?> Function(String? path);
 typedef OnMessageSwipeCallback = void Function(
   String message,
-  String sentBy,
+  String? sentBy,
 );
 typedef ChatBubbleLongPressCallback = void Function(
   double yCordinate,

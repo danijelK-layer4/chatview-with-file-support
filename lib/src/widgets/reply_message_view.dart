@@ -39,10 +39,12 @@ class ReplyMessageViewState extends State<ReplyMessageView> {
 
   ChatUser? currentUser;
 
-  ChatUser? get repliedUser => replyMessage.value.replyTo.isNotEmpty
-      ? context.chatViewIW?.chatController
-          .getUserFromId(replyMessage.value.replyTo)
-      : null;
+  ChatUser? get repliedUser => replyMessage.value.replyTo == null
+      ? null
+      : replyMessage.value.replyTo!.isNotEmpty
+          ? context.chatViewIW?.chatController
+              .getUserFromId(replyMessage.value.replyTo!)
+          : null;
 
   String get _replyTo => replyMessage.value.replyTo == currentUser?.id
       ? PackageStrings.currentLocale.you

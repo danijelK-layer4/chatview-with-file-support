@@ -87,24 +87,24 @@ class ReactionsBottomSheet {
                           ),
                   child: Row(
                     children: [
-                      ProfileImageWidget(
-                        circleRadius:
-                            reactionsBottomSheetConfig?.profileCircleRadius ??
-                                16,
-                        imageUrl: reactedUser.profilePhoto,
-                        imageType: reactedUser.imageType,
-                        defaultAvatarImage: reactedUser.defaultAvatarImage,
-                        assetImageErrorBuilder:
-                            reactedUser.assetImageErrorBuilder,
-                        networkImageErrorBuilder:
-                            reactedUser.networkImageErrorBuilder,
-                        networkImageProgressIndicatorBuilder:
-                            reactedUser.networkImageProgressIndicatorBuilder,
-                      ),
+                      // ProfileImageWidget(
+                      //   circleRadius:
+                      //       reactionsBottomSheetConfig?.profileCircleRadius ??
+                      //           16,
+                      //   imageUrl: reactedUser.profilePhoto,
+                      //   imageType: reactedUser.imageType,
+                      //   defaultAvatarImage: reactedUser.defaultAvatarImage,
+                      //   assetImageErrorBuilder:
+                      //       reactedUser.assetImageErrorBuilder,
+                      //   networkImageErrorBuilder:
+                      //       reactedUser.networkImageErrorBuilder,
+                      //   networkImageProgressIndicatorBuilder:
+                      //       reactedUser.networkImageProgressIndicatorBuilder,
+                      // ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          reactedUser.name,
+                          "reactedUser.name",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style:

@@ -192,11 +192,9 @@ extension TargetPlatformExtension on TargetPlatform {
 }
 
 extension ReplyMessageExteension on ReplyMessage {
-  bool get isEmpty =>
-      messageId.isEmpty &&
-      message.isEmpty &&
-      replyTo.isEmpty &&
-      replyBy.isEmpty;
+  bool get isEmpty => messageId.isEmpty && message.isEmpty && replyTo != null
+      ? replyTo!.isEmpty
+      : true && replyBy.isEmpty;
 }
 
 extension ReactionExteension on Reaction {

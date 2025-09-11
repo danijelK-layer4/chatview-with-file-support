@@ -265,7 +265,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
                   const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Text(
-                messagedUser?.name ?? '',
+                messagedUser?.name ?? widget.message.sentByName ?? '',
                 style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig
                     ?.senderNameTextStyle,
               ),

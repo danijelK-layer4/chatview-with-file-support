@@ -26,10 +26,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../extensions/extensions.dart';
-import '../models/config_models/message_configuration.dart';
-import '../models/config_models/send_message_configuration.dart';
-import '../utils/constants/constants.dart';
-import '../values/typedefs.dart';
 import 'chatui_textfield.dart';
 import 'reply_message_view.dart';
 import 'scroll_to_bottom_button.dart';

@@ -52,7 +52,7 @@ class ReplyMessage {
   final String replyBy;
 
   /// Provides user id of whom to reply.
-  final String replyTo;
+  final String? replyTo;
 
   /// Represents the type of reply message.
   ///
