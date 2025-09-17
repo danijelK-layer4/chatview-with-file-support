@@ -42,6 +42,7 @@ class MessageView extends StatefulWidget {
     required this.isMessageBySender,
     required this.onLongPress,
     required this.isLongPressEnable,
+    this.didTapOnFile,
     this.chatBubbleMaxWidth,
     this.inComingChatBubbleConfig,
     this.outgoingChatBubbleConfig,
@@ -98,6 +99,8 @@ class MessageView extends StatefulWidget {
   final ChatController? controller;
 
   final ValueSetter<int>? onMaxDuration;
+
+  final Function(String)? didTapOnFile;
 
   @override
   State<MessageView> createState() => _MessageViewState();
@@ -220,6 +223,7 @@ class _MessageViewState extends State<MessageView>
                     isMessageBySender: widget.isMessageBySender,
                     inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
                     outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,
+                    didTapOnFile: widget.didTapOnFile,
                   );
                 } else if (widget.message.messageType.isText) {
                   return TextMessageView(

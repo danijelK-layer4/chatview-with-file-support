@@ -68,6 +68,7 @@ class ChatView extends StatefulWidget {
     this.replyMessageBuilder,
     this.replySuggestionsConfig,
     this.scrollToBottomButtonConfig,
+    this.onFilePress,
   })  : chatBackgroundConfig =
             chatBackgroundConfig ?? const ChatBackgroundConfiguration(),
         chatViewStateConfig =
@@ -154,6 +155,8 @@ class ChatView extends StatefulWidget {
 
   /// Provides a configuration for scroll to bottom button config
   final ScrollToBottomButtonConfig? scrollToBottomButtonConfig;
+
+  final Function(String)? onFilePress;
 
   static void closeReplyMessageView(BuildContext context) {
     final state = context.findAncestorStateOfType<_ChatViewState>();
@@ -280,6 +283,7 @@ class _ChatViewState extends State<ChatView>
                                   isLastPage: widget.isLastPage,
                                   loadingWidget: widget.loadingWidget,
                                   onChatListTap: widget.onChatListTap,
+                                  onFilePress: widget.onFilePress,
                                   assignReplyMessage: (message) =>
                                       _sendMessageKey.currentState
                                           ?.assignReplyMessage(message),

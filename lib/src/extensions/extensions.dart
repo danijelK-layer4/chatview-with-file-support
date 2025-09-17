@@ -62,7 +62,7 @@ extension TimeDifference on DateTime {
     return formatter.format(this);
   }
 
-  String get getTimeFromDateTime => DateFormat.Hm().format(this);
+  String get getTimeFromDateTime => DateFormat.Hm().format(toLocal());
 }
 
 /// Extension on String which implements different types string validations.

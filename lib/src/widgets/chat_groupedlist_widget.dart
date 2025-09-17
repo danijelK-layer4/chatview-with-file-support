@@ -44,6 +44,7 @@ class ChatGroupedListWidget extends StatefulWidget {
     required this.assignReplyMessage,
     required this.onChatListTap,
     required this.onChatBubbleLongPress,
+    this.onFilePress,
     required this.isEnableSwipeToSeeTime,
     this.textFieldConfig,
   }) : super(key: key);
@@ -69,6 +70,8 @@ class ChatGroupedListWidget extends StatefulWidget {
 
   /// Provides configuration for text field.
   final TextFieldConfiguration? textFieldConfig;
+
+  final Function(String)? onFilePress;
 
   @override
   State<ChatGroupedListWidget> createState() => _ChatGroupedListWidgetState();
@@ -315,6 +318,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                       xCoordinate,
                       message,
                     ),
+                    didTapOnFile: widget.onFilePress,
                     onSwipe: widget.assignReplyMessage,
                     shouldHighlight: state == message.id,
                     onReplyTap: enableScrollToRepliedMsg

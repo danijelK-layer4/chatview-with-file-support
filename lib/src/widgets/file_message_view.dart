@@ -15,12 +15,14 @@ class FileMessageView extends StatelessWidget {
     required this.isMessageBySender,
     required this.inComingChatBubbleConfig,
     required this.outgoingChatBubbleConfig,
+    this.didTapOnFile,
   }) : super(key: key);
 
   final Message message;
   final bool isMessageBySender;
   final ChatBubble? inComingChatBubbleConfig;
   final ChatBubble? outgoingChatBubbleConfig;
+  final Function(String)? didTapOnFile;
 
   bool _isWebUrl(String urlString) {
     try {
@@ -32,87 +34,69 @@ class FileMessageView extends StatelessWidget {
   }
 
   void _onFileTap(BuildContext context, String pathOrUrl) async {
-    if (kIsWeb) {
-      try {
-        final uri = Uri.parse(pathOrUrl);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Opened web link: ${uri.host}')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Could not open web link.')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid URL or error opening: $pathOrUrl')),
-        );
-      }
-      return;
+    if (didTapOnFile != null) {
+      didTapOnFile!(pathOrUrl);
     }
+    // if (_isWebUrl(pathOrUrl)) {
+    //   try {
+    //     final uri = Uri.parse(pathOrUrl);
+    //     if (await canLaunchUrl(uri)) {
+    //       await launchUrl(uri, mode: LaunchMode.externalApplication);
 
-    if (_isWebUrl(pathOrUrl)) {
-      try {
-        final uri = Uri.parse(pathOrUrl);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(content: Text('Opened web link: ${uri.host}')),
+    //       );
+    //     } else {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(content: Text('Could not open web link: $pathOrUrl')),
+    //       );
+    //     }
+    //   } catch (e) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(content: Text('Invalid URL or error opening: $pathOrUrl')),
+    //     );
+    //   }
+    // } else {
+    //   String actualFilePath;
+    //   if (pathOrUrl.startsWith('file:///')) {
+    //     actualFilePath =
+    //         Uri.decodeComponent(pathOrUrl.substring('file:///'.length));
+    //   } else {
+    //     actualFilePath = Uri.decodeComponent(pathOrUrl);
+    //   }
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Opened web link: ${uri.host}')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Could not open web link: $pathOrUrl')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid URL or error opening: $pathOrUrl')),
-        );
-      }
-    } else {
-      String actualFilePath;
-      if (pathOrUrl.startsWith('file:///')) {
-        actualFilePath =
-            Uri.decodeComponent(pathOrUrl.substring('file:///'.length));
-      } else {
-        actualFilePath = Uri.decodeComponent(pathOrUrl);
-      }
+    //   final File file = File(actualFilePath);
 
-      final File file = File(actualFilePath);
+    //   if (await file.exists()) {
+    //     try {
+    //       final OpenResult result = await OpenFilex.open(actualFilePath);
 
-      if (await file.exists()) {
-        try {
-          final OpenResult result = await OpenFilex.open(actualFilePath);
-
-          if (result.type == ResultType.done) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text('Opened file: ${file.path.split('/').last}')),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      'Could not open file: ${file.path.split('/').last}. Error: ${result.message}')),
-            );
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('An unexpected error occurred: ${e.toString()}')),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'File not found on device: ${file.path.split('/').last}')),
-        );
-      }
-    }
+    //       if (result.type == ResultType.done) {
+    //         ScaffoldMessenger.of(context).showSnackBar(
+    //           SnackBar(
+    //               content: Text('Opened file: ${file.path.split('/').last}')),
+    //         );
+    //       } else {
+    //         ScaffoldMessenger.of(context).showSnackBar(
+    //           SnackBar(
+    //               content: Text(
+    //                   'Could not open file: ${file.path.split('/').last}. Error: ${result.message}')),
+    //         );
+    //       }
+    //     } catch (e) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //             content: Text('An unexpected error occurred: ${e.toString()}')),
+    //       );
+    //     }
+    //   } else {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //           content: Text(
+    //               'File not found on device: ${file.path.split('/').last}')),
+    //     );
+    //   }
+    // }
   }
 
   @override
@@ -238,7 +222,7 @@ class FileMessageView extends StatelessWidget {
             bottom: -2,
             right: 6,
             child: Text(
-              DateFormat('HH:mm').format(message.createdAt),
+              DateFormat('HH:mm').format(message.createdAt.toLocal()),
               style: isMessageBySender
                   ? inComingChatBubbleConfig?.timeTextStyle
                   : outgoingChatBubbleConfig?.timeTextStyle,

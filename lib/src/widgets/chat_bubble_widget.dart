@@ -43,6 +43,7 @@ class ChatBubbleWidget extends StatefulWidget {
     required this.onLongPress,
     required this.slideAnimation,
     required this.onSwipe,
+    this.didTapOnFile,
     this.onReplyTap,
     this.shouldHighlight = false,
   }) : super(key: key);
@@ -64,6 +65,8 @@ class ChatBubbleWidget extends StatefulWidget {
 
   /// Flag for when user tap on replied message and highlight actual message.
   final bool shouldHighlight;
+
+  final Function(String)? didTapOnFile;
 
   @override
   State<ChatBubbleWidget> createState() => _ChatBubbleWidgetState();
@@ -296,6 +299,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             isMessageBySender: isMessageBySender,
             messageConfig: chatListConfig.messageConfig,
             onLongPress: widget.onLongPress,
+            didTapOnFile: widget.didTapOnFile,
             chatBubbleMaxWidth: chatListConfig.chatBubbleConfig?.maxWidth,
             longPressAnimationDuration:
                 chatListConfig.chatBubbleConfig?.longPressAnimationDuration,

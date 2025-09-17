@@ -109,7 +109,9 @@ class TextMessageView extends StatelessWidget {
           bottom: -22,
           right: 6,
           child: Text(
-            DateFormat('HH:mm').format(message.createdAt),
+            DateFormat('HH:mm').format(
+              message.createdAt.toLocal(),
+            ),
             style: isMessageBySender
                 ? inComingChatBubbleConfig?.timeTextStyle
                 : outgoingChatBubbleConfig?.timeTextStyle,

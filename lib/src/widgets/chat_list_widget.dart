@@ -41,6 +41,7 @@ class ChatListWidget extends StatefulWidget {
     this.isLastPage,
     this.onChatListTap,
     this.textFieldConfig,
+    this.onFilePress,
   }) : super(key: key);
 
   /// Provides controller for accessing few function for running chat.
@@ -65,6 +66,8 @@ class ChatListWidget extends StatefulWidget {
 
   /// Provides configuration for text field config.
   final TextFieldConfiguration? textFieldConfig;
+
+  final Function(String)? onFilePress;
 
   @override
   State<ChatListWidget> createState() => _ChatListWidgetState();
@@ -147,6 +150,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                     isEnableSwipeToSeeTime:
                         featureActiveConfig?.enableSwipeToSeeTime ?? true,
                     assignReplyMessage: widget.assignReplyMessage,
+                    onFilePress: widget.onFilePress,
                     onChatBubbleLongPress: (yCoordinate, xCoordinate, message) {
                       if (featureActiveConfig?.enableReactionPopup ?? false) {
                         chatViewIW?.reactionPopupKey.currentState
