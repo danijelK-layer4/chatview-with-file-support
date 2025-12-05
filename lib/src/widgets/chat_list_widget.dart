@@ -128,9 +128,12 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                 (featureActiveConfig?.enablePagination ?? false)) {
               return SizedBox(
                 height: Scaffold.of(context).appBarMaxHeight,
-                child: Center(
-                  child:
-                      widget.loadingWidget ?? const CircularProgressIndicator(),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 16),
+                  child: Center(
+                    child: widget.loadingWidget ??
+                        const CircularProgressIndicator(),
+                  ),
                 ),
               );
             } else {

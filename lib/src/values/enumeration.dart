@@ -247,3 +247,15 @@ enum ChatViewState {
 
   bool get isError => this == error;
 }
+
+enum ChatPaginationDirection {
+  /// Load previous messages when reached to the top of the chat list.
+  previous,
+
+  /// Load next messages when reached to the bottom of the chat list.
+  next;
+
+  bool get isPrevious => this == previous;
+
+  bool get isNext => this == next;
+}

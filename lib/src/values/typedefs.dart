@@ -125,3 +125,12 @@ typedef SuggestionItemBuilder = Widget Function(
   int index,
   SuggestionItemData suggestionItemData,
 );
+
+typedef PaginationCallback = Future<void> Function(
+  ChatPaginationDirection direction,
+  Message message,
+);
+typedef PaginationScrollUpdateResult = ({
+  ChatPaginationDirection? direction,
+  Message? message,
+});
