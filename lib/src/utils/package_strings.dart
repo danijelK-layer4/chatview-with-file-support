@@ -43,6 +43,8 @@ class PackageStrings {
     _localeObjects[locale] = localeObj;
   }
 
+  static String get currentLocaleCode => _currentLocale;
+
   static ChatViewLocale get currentLocale =>
       _localeObjects[_currentLocale] ?? ChatViewLocale.en;
 }

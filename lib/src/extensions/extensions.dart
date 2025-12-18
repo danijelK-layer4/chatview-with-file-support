@@ -52,7 +52,10 @@ extension TimeDifference on DateTime {
     } else if (differenceInDays <= 1 && differenceInDays >= -1) {
       return PackageStrings.currentLocale.yesterday;
     } else {
-      final DateFormat formatter = DateFormat(chatSeparatorDatePattern);
+      final DateFormat formatter = DateFormat(
+        chatSeparatorDatePattern,
+        PackageStrings.currentLocaleCode,
+      );
       return formatter.format(this);
     }
   }

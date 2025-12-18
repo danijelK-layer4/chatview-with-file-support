@@ -195,6 +195,7 @@ class _ChatViewState extends State<ChatView>
   void initState() {
     super.initState();
     setLocaleMessages('en', ReceiptsCustomMessages());
+
     chatTextFieldViewKey = GlobalKey();
   }
 
