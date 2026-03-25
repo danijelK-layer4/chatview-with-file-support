@@ -42,6 +42,8 @@ class ChatBackgroundConfiguration {
     this.loadingWidget,
     this.messageTimeAnimationCurve = Curves.decelerate,
     this.messageSorter,
+    this.emptyMessagesText,
+    this.userIsNotRegisterText,
   });
 
   /// Provides background color of chat view.
@@ -91,6 +93,10 @@ class ChatBackgroundConfiguration {
 
   /// Provides callback to sort message
   final MessageSorter? messageSorter;
+
+  final String? emptyMessagesText;
+
+  final String? userIsNotRegisterText;
 }
 
 class DefaultGroupSeparatorConfiguration {

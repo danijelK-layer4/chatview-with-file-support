@@ -276,6 +276,54 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
           /// needs to be display in chat
           var count = 0;
 
+          if (messages.isEmpty &&
+              chatBackgroundConfig.emptyMessagesText != null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                          color: Color(0xffEDEEF0),
+                          borderRadius: BorderRadius.circular(4)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 12),
+                        child: Text(
+                          chatBackgroundConfig.emptyMessagesText!,
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: Color(0xff4D4544), fontSize: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    if (chatBackgroundConfig.userIsNotRegisterText != null)
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                            color: Color(0xffEDEEF0),
+                            borderRadius: BorderRadius.circular(4)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 12),
+                          child: Text(
+                            chatBackgroundConfig.userIsNotRegisterText!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Color(0xff4D4544), fontSize: 12),
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
+            );
+          }
+
           return ListView.builder(
             key: widget.key,
             physics: const NeverScrollableScrollPhysics(),

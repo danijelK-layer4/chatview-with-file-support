@@ -435,6 +435,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
             config?.preferredCameraDevice ?? CameraDevice.rear,
       );
       String? imagePath = image?.path;
+
+      // if (!(imagePath ?? '').startsWith('file://')) {
+      //   imagePath = 'file://$imagePath';
+      // }
+
       if (config?.onImagePicked != null) {
         String? updatedImagePath = await config?.onImagePicked!(imagePath);
         if (updatedImagePath != null) imagePath = updatedImagePath;
