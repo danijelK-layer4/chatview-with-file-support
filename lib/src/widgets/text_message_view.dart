@@ -20,8 +20,11 @@
  * SOFTWARE.
  */
 import 'package:chatview/src/models/data_models/message.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../extensions/extensions.dart';
 import '../models/chat_bubble.dart';
@@ -31,7 +34,7 @@ import '../utils/constants/constants.dart';
 import 'link_preview.dart';
 import 'reaction_widget.dart';
 
-class TextMessageView extends StatelessWidget {
+class TextMessageView extends StatefulWidget {
   const TextMessageView({
     Key? key,
     required this.isMessageBySender,
@@ -69,15 +72,133 @@ class TextMessageView extends StatelessWidget {
   final Color? highlightColor;
 
   @override
+  State<TextMessageView> createState() => _TextMessageViewState();
+}
+
+class _TextMessageViewState extends State<TextMessageView> {
+  static final _urlRegExp = RegExp(
+    r'https?://[^\s]+',
+    caseSensitive: false,
+  );
+
+  final List<TapGestureRecognizer> _recognizers = [];
+
+  @override
+  void dispose() {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    super.dispose();
+  }
+
+  List<InlineSpan> _buildSpans(String text, TextStyle baseStyle) {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    _recognizers.clear();
+
+    final spans = <InlineSpan>[];
+    int lastEnd = 0;
+
+    for (final match in _urlRegExp.allMatches(text)) {
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(
+          text: text.substring(lastEnd, match.start),
+          style: baseStyle,
+        ));
+      }
+      final url = match.group(0)!;
+      final recognizer = TapGestureRecognizer()
+        ..onTap = () => _handleLinkTap(url, text);
+      _recognizers.add(recognizer);
+      spans.add(TextSpan(
+        text: url,
+        style: baseStyle.copyWith(
+          color: Colors.lightBlueAccent,
+          decoration: TextDecoration.underline,
+          decorationColor: Colors.lightBlueAccent,
+        ),
+        recognizer: recognizer,
+      ));
+      lastEnd = match.end;
+    }
+
+    if (lastEnd < text.length) {
+      spans.add(TextSpan(text: text.substring(lastEnd), style: baseStyle));
+    }
+
+    return spans;
+  }
+
+  void _handleLinkTap(String url, String fullMessage) {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                url,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.open_in_browser),
+              title: const Text('Open in browser'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _launchUrl(url);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.link),
+              title: const Text('Copy link'),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: url));
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.copy),
+              title: const Text('Copy message'),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: fullMessage));
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri != null) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final textMessage = message.message;
+    final textMessage = widget.message.message;
+    final baseStyle = _textStyle ??
+        textTheme.bodyMedium!.copyWith(
+          color: Colors.white,
+          fontSize: 16,
+        );
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Container(
           constraints: BoxConstraints(
-              maxWidth: chatBubbleMaxWidth ??
+              maxWidth: widget.chatBubbleMaxWidth ??
                   MediaQuery.of(context).size.width * 0.75),
           padding: _padding ??
               const EdgeInsets.symmetric(
@@ -85,10 +206,10 @@ class TextMessageView extends StatelessWidget {
                 vertical: 10,
               ),
           margin: _margin ??
-              EdgeInsets.fromLTRB(
-                  5, 0, 6, message.reaction.reactions.isNotEmpty ? 15 : 2),
+              EdgeInsets.fromLTRB(5, 0, 6,
+                  widget.message.reaction.reactions.isNotEmpty ? 15 : 2),
           decoration: BoxDecoration(
-            color: highlightMessage ? highlightColor : _color,
+            color: widget.highlightMessage ? widget.highlightColor : _color,
             borderRadius: _borderRadius(textMessage),
           ),
           child: textMessage.isUrl
@@ -96,13 +217,8 @@ class TextMessageView extends StatelessWidget {
                   linkPreviewConfig: _linkPreviewConfig,
                   url: textMessage,
                 )
-              : Text(
-                  textMessage,
-                  style: _textStyle ??
-                      textTheme.bodyMedium!.copyWith(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+              : SelectableText.rich(
+                  TextSpan(children: _buildSpans(textMessage, baseStyle)),
                 ),
         ),
         Positioned(
@@ -110,51 +226,51 @@ class TextMessageView extends StatelessWidget {
           right: 6,
           child: Text(
             DateFormat('HH:mm').format(
-              message.createdAt.toLocal(),
+              widget.message.createdAt.toLocal(),
             ),
-            style: isMessageBySender
-                ? inComingChatBubbleConfig?.timeTextStyle
-                : outgoingChatBubbleConfig?.timeTextStyle,
+            style: widget.isMessageBySender
+                ? widget.inComingChatBubbleConfig?.timeTextStyle
+                : widget.outgoingChatBubbleConfig?.timeTextStyle,
           ),
         ),
-        if (message.reaction.reactions.isNotEmpty)
+        if (widget.message.reaction.reactions.isNotEmpty)
           ReactionWidget(
-            key: key,
-            isMessageBySender: isMessageBySender,
-            reaction: message.reaction,
-            messageReactionConfig: messageReactionConfig,
+            key: widget.key,
+            isMessageBySender: widget.isMessageBySender,
+            reaction: widget.message.reaction,
+            messageReactionConfig: widget.messageReactionConfig,
           ),
       ],
     );
   }
 
-  EdgeInsetsGeometry? get _padding => isMessageBySender
-      ? outgoingChatBubbleConfig?.padding
-      : inComingChatBubbleConfig?.padding;
+  EdgeInsetsGeometry? get _padding => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.padding
+      : widget.inComingChatBubbleConfig?.padding;
 
-  EdgeInsetsGeometry? get _margin => isMessageBySender
-      ? outgoingChatBubbleConfig?.margin
-      : inComingChatBubbleConfig?.margin;
+  EdgeInsetsGeometry? get _margin => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.margin
+      : widget.inComingChatBubbleConfig?.margin;
 
-  LinkPreviewConfiguration? get _linkPreviewConfig => isMessageBySender
-      ? outgoingChatBubbleConfig?.linkPreviewConfig
-      : inComingChatBubbleConfig?.linkPreviewConfig;
+  LinkPreviewConfiguration? get _linkPreviewConfig => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.linkPreviewConfig
+      : widget.inComingChatBubbleConfig?.linkPreviewConfig;
 
-  TextStyle? get _textStyle => isMessageBySender
-      ? outgoingChatBubbleConfig?.textStyle
-      : inComingChatBubbleConfig?.textStyle;
+  TextStyle? get _textStyle => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.textStyle
+      : widget.inComingChatBubbleConfig?.textStyle;
 
-  BorderRadiusGeometry _borderRadius(String message) => isMessageBySender
-      ? outgoingChatBubbleConfig?.borderRadius ??
+  BorderRadiusGeometry _borderRadius(String message) => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.borderRadius ??
           (message.length < 37
               ? BorderRadius.circular(replyBorderRadius1)
               : BorderRadius.circular(replyBorderRadius2))
-      : inComingChatBubbleConfig?.borderRadius ??
+      : widget.inComingChatBubbleConfig?.borderRadius ??
           (message.length < 29
               ? BorderRadius.circular(replyBorderRadius1)
               : BorderRadius.circular(replyBorderRadius2));
 
-  Color get _color => isMessageBySender
-      ? outgoingChatBubbleConfig?.color ?? Colors.purple
-      : inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
+  Color get _color => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.color ?? Colors.purple
+      : widget.inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
 }
