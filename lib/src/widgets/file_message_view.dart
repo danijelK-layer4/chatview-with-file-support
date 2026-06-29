@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 import 'package:open_filex/open_filex.dart';
-import 'dart:io'; // Needed for File class
-// import 'package:open_filex/open_filex.dart'; // Import open_filex
-import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart'; // Import kIsWeb
 
@@ -36,67 +34,52 @@ class FileMessageView extends StatelessWidget {
   void _onFileTap(BuildContext context, String pathOrUrl) async {
     if (didTapOnFile != null) {
       didTapOnFile!(pathOrUrl);
+      return;
     }
-    // if (_isWebUrl(pathOrUrl)) {
-    //   try {
-    //     final uri = Uri.parse(pathOrUrl);
-    //     if (await canLaunchUrl(uri)) {
-    //       await launchUrl(uri, mode: LaunchMode.externalApplication);
 
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(content: Text('Opened web link: ${uri.host}')),
-    //       );
-    //     } else {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(content: Text('Could not open web link: $pathOrUrl')),
-    //       );
-    //     }
-    //   } catch (e) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('Invalid URL or error opening: $pathOrUrl')),
-    //     );
-    //   }
-    // } else {
-    //   String actualFilePath;
-    //   if (pathOrUrl.startsWith('file:///')) {
-    //     actualFilePath =
-    //         Uri.decodeComponent(pathOrUrl.substring('file:///'.length));
-    //   } else {
-    //     actualFilePath = Uri.decodeComponent(pathOrUrl);
-    //   }
+    if (_isWebUrl(pathOrUrl)) {
+      try {
+        final uri = Uri.parse(pathOrUrl);
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open link: $pathOrUrl')),
+        );
+      }
+    } else {
+      String actualFilePath;
+      if (pathOrUrl.startsWith('file:///')) {
+        actualFilePath =
+            Uri.decodeComponent(pathOrUrl.substring('file:///'.length));
+      } else {
+        actualFilePath = Uri.decodeComponent(pathOrUrl);
+      }
 
-    //   final File file = File(actualFilePath);
+      final File file = File(actualFilePath);
+      final bool exists = await file.exists();
 
-    //   if (await file.exists()) {
-    //     try {
-    //       final OpenResult result = await OpenFilex.open(actualFilePath);
-
-    //       if (result.type == ResultType.done) {
-    //         ScaffoldMessenger.of(context).showSnackBar(
-    //           SnackBar(
-    //               content: Text('Opened file: ${file.path.split('/').last}')),
-    //         );
-    //       } else {
-    //         ScaffoldMessenger.of(context).showSnackBar(
-    //           SnackBar(
-    //               content: Text(
-    //                   'Could not open file: ${file.path.split('/').last}. Error: ${result.message}')),
-    //         );
-    //       }
-    //     } catch (e) {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //             content: Text('An unexpected error occurred: ${e.toString()}')),
-    //       );
-    //     }
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //           content: Text(
-    //               'File not found on device: ${file.path.split('/').last}')),
-    //     );
-    //   }
-    // }
+      if (exists) {
+        try {
+          final OpenResult result = await OpenFilex.open(actualFilePath);
+          if (result.type != ResultType.done) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      'Could not open file: ${file.path.split('/').last}. ${result.message}')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error opening file: ${e.toString()}')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('File not found: ${file.path.split('/').last}')),
+        );
+      }
+    }
   }
 
   @override

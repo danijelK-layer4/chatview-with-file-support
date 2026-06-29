@@ -82,6 +82,8 @@ class _TextMessageViewState extends State<TextMessageView> {
   );
 
   final List<TapGestureRecognizer> _recognizers = [];
+  String? _lastBuiltText;
+  List<InlineSpan> _cachedSpans = [];
 
   @override
   void dispose() {
@@ -92,6 +94,10 @@ class _TextMessageViewState extends State<TextMessageView> {
   }
 
   List<InlineSpan> _buildSpans(String text, TextStyle baseStyle) {
+    if (_lastBuiltText == text) {
+      return _cachedSpans;
+    }
+
     for (final r in _recognizers) {
       r.dispose();
     }
@@ -127,6 +133,8 @@ class _TextMessageViewState extends State<TextMessageView> {
       spans.add(TextSpan(text: text.substring(lastEnd), style: baseStyle));
     }
 
+    _lastBuiltText = text;
+    _cachedSpans = spans;
     return spans;
   }
 
@@ -217,7 +225,7 @@ class _TextMessageViewState extends State<TextMessageView> {
                   linkPreviewConfig: _linkPreviewConfig,
                   url: textMessage,
                 )
-              : SelectableText.rich(
+              : Text.rich(
                   TextSpan(children: _buildSpans(textMessage, baseStyle)),
                 ),
         ),
